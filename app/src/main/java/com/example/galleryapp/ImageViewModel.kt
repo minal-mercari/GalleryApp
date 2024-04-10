@@ -1,4 +1,5 @@
 package com.example.galleryapp
+
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -12,12 +13,12 @@ import kotlinx.coroutines.withContext
 
 class ImageViewModel(private val repository: ImageRepository) : ViewModel() {
 
-    private val unsplashService = RetrofitClient.create()
     val imageList: LiveData<List<ImageEntity>> = repository.getAllImages()
 
     init {
         fetchAndStoreImages()
     }
+
     companion object {
 
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
@@ -26,7 +27,8 @@ class ImageViewModel(private val repository: ImageRepository) : ViewModel() {
                 modelClass: Class<T>,
                 extras: CreationExtras
             ): T {
-                val application = checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
+                val application =
+                    checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
                 val imageDatabase = Room.databaseBuilder(
                     application.applicationContext,
                     ImageDatabase::class.java, "image-database"

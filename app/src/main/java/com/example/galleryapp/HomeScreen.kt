@@ -1,5 +1,5 @@
 package com.example.galleryapp
-import androidx.compose.foundation.Image
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,10 +15,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.asFlow
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import coil.compose.rememberImagePainter
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -58,12 +63,24 @@ fun ImageItem(image: ImageEntity, navController: NavController) {
                 val url =
                     URLEncoder.encode(image.url, StandardCharsets.ISO_8859_1.toString())
                 println("!!!!! $url")
-                navController.navigate("detail?url=" + image.url + "&alt_description=" + image.altDescription + "&user=" + image.user)
+                navController.navigate("detail?url=" + url + "&alt_description=" + image.altDescription + "&user=" + image.user)
             }
     ) {
-        Image(
-            painter = painter,
-            contentDescription = null,
+
+        //https://images.unsplash.com/photo-1712390533284-a6f235708af0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1ODUxNjF8MHwxfGFsbHw3fHx8fHx8Mnx8MTcxMjU3MjMwN3w&ixlib=rb-4.0.3&q=80&w=1080
+        //https://images.unsplash.com/photo-1712390533284-a6f235708af0?crop=entropy
+        val imageRequest = ImageRequest.Builder(LocalContext.current)
+            .data(image.url)
+            .memoryCacheKey(image.url)
+            .diskCacheKey(image.url)
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .memoryCachePolicy(CachePolicy.ENABLED)
+            .build()
+
+        AsyncImage(
+            model = imageRequest,
+            contentDescription = image.altDescription,
+            contentScale = ContentScale.FillWidth,
             modifier = Modifier.fillMaxSize()
         )
     }

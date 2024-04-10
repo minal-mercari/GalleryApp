@@ -4,7 +4,6 @@ import android.app.DownloadManager
 import android.content.Context
 import android.net.Uri
 import android.os.Environment
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -19,14 +18,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import coil.compose.rememberImagePainter
+import coil.compose.AsyncImage
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 
 @Composable
 fun DetailScreen(
-   imageURL: String,
-   alt_description: String?,
+    imageURL: String,
+    alt_description: String?,
     user: String?,
     navController: NavController,
     imageViewModel: ImageViewModel
@@ -38,19 +39,29 @@ fun DetailScreen(
     Column(modifier = Modifier.padding(16.dp)) {
         Text(text = "Detail Screen", modifier = Modifier.padding(bottom = 16.dp))
 
-        Image(
-            painter = rememberImagePainter(data = url),
-            contentDescription = null,
+
+        val imageRequest = ImageRequest.Builder(context)
+            .data(url)
+            .memoryCacheKey(url)
+            .diskCacheKey(url)
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .memoryCachePolicy(CachePolicy.ENABLED)
+            .build()
+
+        AsyncImage(
+            model = imageRequest,
+            contentDescription = alt_description,
+            contentScale = ContentScale.FillWidth,
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(1f)
-                .aspectRatio(1f),
-            contentScale = ContentScale.FillWidth
-
+                .aspectRatio(1f)
         )
-
-        // Details occupy the other half
-        Column(modifier = Modifier.weight(1f).padding(start = 16.dp)) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 16.dp)
+        ) {
             // Add the user details
             user?.let {
                 Text(text = "Author: $user")
@@ -65,7 +76,7 @@ fun DetailScreen(
             }
 
             // Download button
-            Button(onClick = { downloadImage(context, url) }) {
+            Button(onClick = { downloadImage(context, imageURL) }) {
                 Text(text = "Download Image")
             }
         }

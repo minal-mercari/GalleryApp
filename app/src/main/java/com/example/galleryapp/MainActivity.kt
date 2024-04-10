@@ -1,4 +1,5 @@
 package com.example.galleryapp
+
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -31,19 +32,17 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("detail?url={param1}&alt_description={param2}&user={param3}") { backStackEntry ->
 
-                        val name = backStackEntry.arguments?.getString("param1").toString()
+                        val url = backStackEntry.arguments?.getString("param1").toString()
                         val alt_description =
                             backStackEntry.arguments?.getString("param2").toString()
-                        Log.d("image", name)
+                        Log.d("image", url)
                         val userJson = backStackEntry.arguments?.getString("param3").toString()
                         Log.d(
                             "UserJson",
                             userJson
                         )
-                        Log.d("v123", name.toString())
-
                         DetailScreen(
-                           imageURL = name,
+                            imageURL = url,
                             alt_description = alt_description,
                             user = userJson,
                             navController = navController,
