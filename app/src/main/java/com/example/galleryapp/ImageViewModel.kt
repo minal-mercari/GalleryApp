@@ -7,14 +7,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.room.Room
+import com.example.galleryapp.ui.theme.UiImageModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ImageViewModel(private val repository: ImageRepository) : ViewModel() {
-
-    val imageList: LiveData<List<ImageEntity>> = repository.getAllImages()
-
+    val imageList: LiveData<List<UiImageModel>> = repository.getAllImages()
     init {
         fetchAndStoreImages()
     }
@@ -45,8 +44,8 @@ class ImageViewModel(private val repository: ImageRepository) : ViewModel() {
     private fun fetchAndStoreImages() {
         viewModelScope.launch {
             try {
-                val response = withContext(Dispatchers.IO) {
-                    repository.fetchAndStoreImages()
+        val response = withContext(Dispatchers.IO) {
+            repository.fetchAndStoreImages()
                 }
                 Log.d("api", response.toString())
             } catch (e: Exception) {
