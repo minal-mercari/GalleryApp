@@ -18,6 +18,5 @@ suspend fun getUserDetails(
     @Path("username") username: String
 ): User
 
-
 }
 

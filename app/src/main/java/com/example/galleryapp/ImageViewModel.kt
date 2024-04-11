@@ -1,4 +1,5 @@
 package com.example.galleryapp
+
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -6,18 +7,17 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.room.Room
+import com.example.galleryapp.ui.theme.UiImageModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ImageViewModel(private val repository: ImageRepository) : ViewModel() {
-
-    private val unsplashService = RetrofitClient.create()
-    val imageList: LiveData<List<ImageEntity>> = repository.getAllImages()
-
+    val imageList: LiveData<List<UiImageModel>> = repository.getAllImages()
     init {
         fetchAndStoreImages()
     }
+
     companion object {
 
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
@@ -26,7 +26,8 @@ class ImageViewModel(private val repository: ImageRepository) : ViewModel() {
                 modelClass: Class<T>,
                 extras: CreationExtras
             ): T {
-                val application = checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
+                val application =
+                    checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
                 val imageDatabase = Room.databaseBuilder(
                     application.applicationContext,
                     ImageDatabase::class.java, "image-database"
@@ -43,8 +44,8 @@ class ImageViewModel(private val repository: ImageRepository) : ViewModel() {
     private fun fetchAndStoreImages() {
         viewModelScope.launch {
             try {
-                val response = withContext(Dispatchers.IO) {
-                    repository.fetchAndStoreImages()
+        val response = withContext(Dispatchers.IO) {
+            repository.fetchAndStoreImages()
                 }
                 Log.d("api", response.toString())
             } catch (e: Exception) {
